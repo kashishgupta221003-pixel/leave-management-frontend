@@ -1,0 +1,78 @@
+<div class="manager-dashboard">
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <div class="navbar-left">
+        <h1 class="navbar-title">Welcome, {{ username }}</h1>
+        <span class="navbar-icon">👤</span>
+      </div>
+      <a class="btn-logout-link" (click)="onLogout()">Logout</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="dashboard-container">
+     <!-- DEBUG -->
+      <p>Loading: {{ loading }}</p>
+      <p>Total Leaves: {{ leaves?.length }}</p>
+    <!-- Loading State -->
+    <div class="loading" *ngIf="loading">
+      <p>Loading leave requests...</p>
+    </div>
+
+    <!-- Leave Requests Table -->
+    <div class="leave-table-container" >
+      <table class="leave-table" *ngIf="(leaves?.length ?? 0) > 0; else noLeaves">
+        <thead>
+          <tr>
+            <th>Emp Id</th>
+            <th>Type</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Reason</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let leave of leaves">
+            <td>{{ leave.employee_id }}</td>
+            <td>{{ leave.leave_type }}</td>
+            <td>{{ leave.start_date }}</td>
+            <td>{{ leave.end_date }}</td>
+            <td>{{ leave.reason }}</td>
+            <td>
+              <span [ngClass]="'status-badge ' + getStatusClass(leave.status)">
+                {{ getStatusIcon(leave.status) }} {{ leave.status }}
+              </span>
+            </td>
+            <td class="action-buttons">
+              <button
+                class="btn-approve"
+                (click)="approveLeave(leave.leave_id)"
+                [disabled]="leave.status?.toLowerCase() !== 'pending'"
+                title="Approve leave"
+              >
+                Approve
+              </button>
+              <button
+                class="btn-reject"
+                (click)="rejectLeave(leave.leave_id)"
+                [disabled]="leave.status?.toLowerCase() !== 'pending'"
+                title="Reject leave"
+              >
+                Reject
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #noLeaves>
+        <div class="no-data">
+          <p>No leave requests found.</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,88 @@
+<div class="employee-dashboard">
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <div class="navbar-left">
+        <span class="navbar-title">Welcome, {{ username }}</span>
+        <span class="navbar-icon">👤</span>
+      </div>
+      <a class="btn-logout-link-employee" (click)="onLogout()">Logout</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="dashboard-container">
+    <div class="action-bar">
+      <button class="btn-apply-leave" (click)="openApplyLeaveModal()">Apply Leave</button>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading" *ngIf="loading">
+      <p>Loading your leave requests...</p>
+    </div>
+
+    <!-- Leave History Table -->
+    <div class="leave-table-container" *ngIf="!loading">
+      <table class="leave-table" *ngIf="leaves.length > 0; else noLeaves">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Leave Type</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Reason</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let leave of leaves">
+            <td>{{ leave.leave_id | slice: 0:9 }}</td>
+            <td>{{ leave.leave_type }}</td>
+            <td>{{ leave.start_date }}</td>
+            <td>{{ leave.end_date }}</td>
+            <td>{{ leave.reason }}</td>
+            <td>
+              <span [ngClass]="'status-badge ' + getStatusClass(leave.status)">
+                {{ getStatusIcon(leave.status) }} {{ leave.status }}
+              </span>
+            </td>
+            <td>
+               <button
+                class="btn-edit"
+                (click)="editLeave(leave)"
+                [disabled]="leave.status?.toLowerCase() !== 'pending'"
+                title="Edit leave"
+                >
+                 Edit
+                </button>
+          
+              <button
+                class="btn-withdraw"
+                (click)="deleteLeave(leave.leave_id)"
+                [disabled]="leave.status?.toLowerCase() !== 'pending'"
+                title="Withdraw leave"
+              >
+                Withdraw
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #noLeaves>
+        <div class="no-data">
+          <p>No leave requests found. Apply for leave to get started!</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <!-- Apply Leave Modal -->
+  <app-apply-leave-modal
+    *ngIf="showModal"
+    [leaveData]="selectedLeave"
+    (close)="closeModal()"
+    (submitted)="onLeaveSubmitted()"
+  ></app-apply-leave-modal>
+</div>

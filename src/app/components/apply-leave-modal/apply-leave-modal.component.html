@@ -1,0 +1,88 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Apply For Leaves</h2>
+      <button class="close-btn" (click)="onClose()">&times;</button>
+    </div>
+
+    <form [formGroup]="leaveForm" (ngSubmit)="onSubmit()" class="modal-form">
+      <!-- Leave Type -->
+      <div class="form-group">
+        <label for="leave_type">Leave Type *</label>
+        <select
+          id="leave_type"
+          class="form-control"
+          formControlName="leave_type"
+        >
+          <option value="">Select Leave Type</option>
+          <option *ngFor="let type of leaveTypes" [value]="type">{{ type }}</option>
+        </select>
+        <div class="error-message" *ngIf="submitted_form && f['leave_type'].errors">
+          Leave type is required
+        </div>
+      </div>
+
+      <!-- Start Date -->
+      <div class="form-group">
+        <label for="start_date">Start Date *</label>
+        <input
+          type="date"
+          id="start_date"
+          class="form-control"
+          formControlName="start_date"
+          [min]="today"
+          (change)="onDateChange()"
+        />
+        <div class="error-message" *ngIf="submitted_form && f['start_date'].errors">
+          Start date is required
+        </div>
+      </div>
+
+      <!-- End Date -->
+      <div class="form-group">
+        <label for="end_date">End Date *</label>
+        <input
+          type="date"
+          id="end_date"
+          class="form-control"
+          formControlName="end_date"
+          [min]="leaveForm.get('start_date')?.value || today"
+        />
+        <div class="error-message" *ngIf="submitted_form && f['end_date'].errors">
+          End date is required
+        </div>
+      </div>
+
+      <!-- Reason -->
+      <div class="form-group">
+        <label for="reason">Reason *</label>
+        <textarea
+          id="reason"
+          class="form-control"
+          formControlName="reason"
+          placeholder="Enter reason for leave (minimum 10 characters)"
+          rows="4"
+        ></textarea>
+        <div class="error-message" *ngIf="submitted_form && f['reason'].errors">
+          <span *ngIf="f['reason'].errors['required']">Reason is required</span>
+          <span *ngIf="f['reason'].errors['minlength']">Reason must be at least 10 characters</span>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+      <!-- Form Actions -->
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="onClose()">Cancel</button>
+        <button
+          type="submit"
+          class="btn-submit"
+          [disabled]="!leaveForm.valid || loading"
+        >
+          {{ loading ? 'Submitting...' : 'Submit Leave' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
