@@ -7,7 +7,7 @@ import { AuthService } from './auth.service';
   providedIn: 'root',
 })
 export class LeaveService {
-  private apiUrl = 'http://localhost:8000';
+  private apiUrl = 'https://leave-management-backend-427919814652.asia-south1.run.app';
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
